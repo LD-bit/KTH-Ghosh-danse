@@ -27,20 +27,22 @@ from parameters import get_parameters, get_H_DANSE
 # Import estimator model and functions
 from src.danse import DANSE, train_danse, test_danse
 
-def main():
 
+    
+if __name__ == "__main__":
+    
     usage = "Train DANSE using trajectories of SSMs \n"\
         "python3.8 main_danse.py --mode [train/test] --model_type [gru/lstm/rnn] --dataset_mode [LinearSSM/LorenzSSM] \n"\
         "--datafile [fullpath to datafile] --splits [fullpath to splits file]"
     
-    parser = argparse.ArgumentParser(description="Input a string indicating the mode of the script \n"\
-        "train - training and testing is done, test-only evlaution is carried out")
-    parser.add_argument("--mode", help="Enter the desired mode", type=str)
-    parser.add_argument("--rnn_model_type", help="Enter the desired model (rnn/lstm/gru)", type=str)
-    parser.add_argument("--dataset_type", help="Enter the type of dataset (pfixed/vars/all)", type=str)
-    parser.add_argument("--model_file_saved", help="In case of testing mode, Enter the desired model checkpoint with full path (gru/lstm/rnn)", type=str, default=None)
-    parser.add_argument("--datafile", help="Enter the full path to the dataset", type=str)
-    parser.add_argument("--splits", help="Enter full path to splits file", type=str)
+    # parser = argparse.ArgumentParser(description="Input a string indicating the mode of the script \n"\
+    #     "train - training and testing is done, test-only evlaution is carried out")
+    # parser.add_argument("--mode", help="Enter the desired mode", type=str)
+    # parser.add_argument("--rnn_model_type", help="Enter the desired model (rnn/lstm/gru)", type=str)
+    # parser.add_argument("--dataset_type", help="Enter the type of dataset (pfixed/vars/all)", type=str)
+    # parser.add_argument("--model_file_saved", help="In case of testing mode, Enter the desired model checkpoint with full path (gru/lstm/rnn)", type=str, default=None)
+    # parser.add_argument("--datafile", help="Enter the full path to the dataset", type=str)
+    # parser.add_argument("--splits", help="Enter full path to splits file", type=str)
     
     # args = parser.parse_args() 
     # mode = args.mode
@@ -52,11 +54,11 @@ def main():
     # splits_file = args.splits
     
     mode = "train"
-    rnn_model_type = "gru"
+    model_type = "gru"
     dataset_type = "LorenzSSM"
-    datafile = "data/trajectories_m_3_n_3_LorenzSSM_data_T_1000_N_500_r2_40.0dB_nu_-20dB.pkl"
-    datafolder = "".join(datafile.split("/")[i]+"/" for i in range(len(datafile.split("/")) - 1))
-    splits = "data/splits.pkl"
+    datafile = 'data/trajectories_m_3_n_3_LorenzSSM_data_T_1000_N_500_r2_20dB_nu_-20dB.pkl'
+    datafolder = "data/"
+    splits_file = "data\splits.pkl"
     
     print("datafile: {}".format(datafile))
     print(datafile.split('/')[-1])
@@ -68,7 +70,6 @@ def main():
     T = 1000
     N_samples = 500
     type_ = 'LorenzSSM'
-    output_path = 'data'
     inverse_r2_dB = 20
     nu_dB = -20
     ngpu = 1 # Comment this out if you want to run on cpu and the next line just set device to "cpu"
@@ -89,15 +90,13 @@ def main():
     estimator_options = est_parameters_dict["danse"] # Get the options for the estimator
     estimator_options['H'] = get_H_DANSE(type_=dataset_type, n_states=n_states, n_obs=n_obs)
 
-    if not os.path.isfile(datafile):
-        
+    if not os.path.isfile(datafile):        
         print("Dataset is not present, run 'generate_data.py / run_generate_data.sh' to create the dataset")
         #plot_trajectories(Z_pM, ncols=1, nrows=10)
     else:
-
         print("Dataset already present!")
         Z_XY = load_saved_dataset(filename=datafile)
-    
+        
     Z_XY_dataset = Series_Dataset(Z_XY_dict=Z_XY)
 
     if not os.path.isfile(splits_file):
@@ -219,9 +218,3 @@ def main():
             model_file=model_file_saved,
             test_logfile_path=te_logfile_name_with_path
             )
-    
-    return None
-
-if __name__ == "__main__":
-    
-    main()
