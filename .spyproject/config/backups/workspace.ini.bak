@@ -1,0 +1,12 @@
+[workspace]
+restore_data_on_startup = True
+save_data_on_exit = True
+save_history = True
+save_non_project_files = False
+project_type = 'empty-project-type'
+recent_files = ['src\\danse.py', 'main_danse.py', 'run_generate_data.sh', 'generate_data.py', 'parameters.py', 'ssm_models.py', '..\\..\\..\\anaconda3\\lib\\site-packages\\numpy\\linalg\\linalg.py', '..\\..\\..\\anaconda3\\lib\\site-packages\\numpy\\core\\arrayprint.py']
+
+[main]
+version = 0.2.0
+recent_files = []
+

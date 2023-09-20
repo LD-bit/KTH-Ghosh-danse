@@ -42,20 +42,35 @@ def main():
     parser.add_argument("--datafile", help="Enter the full path to the dataset", type=str)
     parser.add_argument("--splits", help="Enter full path to splits file", type=str)
     
-    args = parser.parse_args() 
-    mode = args.mode
-    model_type = args.rnn_model_type
-    datafile = args.datafile
-    dataset_type = args.dataset_type
+    # args = parser.parse_args() 
+    # mode = args.mode
+    # model_type = args.rnn_model_type
+    # datafile = args.datafile
+    # dataset_type = args.dataset_type
+    # datafolder = "".join(datafile.split("/")[i]+"/" for i in range(len(datafile.split("/")) - 1))
+    # model_file_saved = args.model_file_saved
+    # splits_file = args.splits
+    
+    mode = "train"
+    rnn_model_type = "gru"
+    dataset_type = "LorenzSSM"
+    datafile = "data/trajectories_m_3_n_3_LorenzSSM_data_T_1000_N_500_r2_40.0dB_nu_-20dB.pkl"
     datafolder = "".join(datafile.split("/")[i]+"/" for i in range(len(datafile.split("/")) - 1))
-    model_file_saved = args.model_file_saved
-    splits_file = args.splits
+    splits = "data/splits.pkl"
     
     print("datafile: {}".format(datafile))
     print(datafile.split('/')[-1])
+    print(datafolder)
     # Dataset parameters obtained from the 'datafile' variable
-    _, n_states, n_obs, _, T, N_samples, inverse_r2_dB, nu_dB = parse("{}_m_{:d}_n_{:d}_{}_data_T_{:d}_N_{:d}_r2_{:f}dB_nu_{:f}dB.pkl", datafile.split('/')[-1])
-    
+    # _, n_states, n_obs, _, T, N_samples, inverse_r2_dB, nu_dB = parse("{}_m_{:d}_n_{:d}_{}_data_T_{:d}_N_{:d}_r2_{:f}dB_nu_{:f}dB.pkl", datafile.split('/')[-1])
+    n_states = 3
+    n_obs = 3
+    T = 1000
+    N_samples = 500
+    type_ = 'LorenzSSM'
+    output_path = 'data'
+    inverse_r2_dB = 20
+    nu_dB = -20
     ngpu = 1 # Comment this out if you want to run on cpu and the next line just set device to "cpu"
     device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu>0) else "cpu")
     print("Device Used:{}".format(device))
@@ -208,4 +223,5 @@ def main():
     return None
 
 if __name__ == "__main__":
+    
     main()
