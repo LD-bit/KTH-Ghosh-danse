@@ -15,6 +15,7 @@ from ssm_models import LinearSSM, LorenzAttractorModel, SinusoidalSSM
 import argparse
 from parse import parse
 import os
+import panda as pd
 
 def initialize_model(type_, parameters):
 
@@ -121,8 +122,13 @@ def generate_state_observation_pairs(type_, parameters, T=200, N_samples=1000):
 
     return Z_XY
 
-# My function to generation X,Y with uneven column size, derived from generate_state_observation_pairs()
 def generate_state_observation_XY(type_, parameters, T=200, N_samples=1000):
+    
+    '''
+    Author: L. Dubreil
+    Modified function to generation X,Y with uneven column size, derived from 
+    generate_state_observation_pairs()
+    '''
 
     # Define the parameters of the model
     #N = 1000
@@ -135,7 +141,7 @@ def generate_state_observation_XY(type_, parameters, T=200, N_samples=1000):
     Z_XY["num_samples"] = N_samples
     Z_XY_data_lengths = [] 
 
-    Z_XY_data = {} # changed list type to dict type
+    Z_XY_data = {} # modification: changed list type to dict type
 
     ssm_model = initialize_model(type_, parameters)
     Z_XY['ssm_model'] = ssm_model
@@ -144,9 +150,36 @@ def generate_state_observation_XY(type_, parameters, T=200, N_samples=1000):
         
         Xi, Yi = generate_SSM_data(ssm_model, T, parameters)
         Z_XY_data_lengths.append(T)
-        Z_XY_data[i] = [Xi, Yi]
+        Z_XY_data[i] = [Xi, Yi] # modification: changed append() with association
         #print(Z_XY_data)
     Z_XY["data"] = Z_XY_data
+    Z_XY["trajectory_lengths"] = np.vstack(Z_XY_data_lengths)
+
+    return Z_XY
+
+def modified_generate_state_observation_XY(type_, parameters, T=200, N_samples=1000):
+    '''
+    Author: L. Dubreil
+    Modified version of generation of data to shift the measurements ingested
+    in the RNN. The goal is to mimic the creation of prior statistics based on
+    measurements at previous time step.
+    '''   
+    Z_XY = {} # empty dict
+    Z_XY["num_samples"] = N_samples
+    Z_XY_data_lengths = [] 
+
+    Z_XY_data = {} 
+
+    ssm_model = initialize_model(type_, parameters)
+    Z_XY['ssm_model'] = ssm_model
+    
+    for i in range(N_samples):
+        Xi, Yi = generate_SSM_data(ssm_model, T, parameters)
+        Z_XY_data_lengths.append(T)
+        Z_XY_data[i] = [Xi, Yi] # modification: changed append() with association
+    
+    Z_XY_data = pd.DataFrame(Z_XY_data) # modification
+    Z_XY["data"] = np.row_stack(Z_XY_data,dtype=object, casting='no')
     Z_XY["trajectory_lengths"] = np.vstack(Z_XY_data_lengths)
 
     return Z_XY

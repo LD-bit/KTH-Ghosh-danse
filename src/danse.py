@@ -102,20 +102,12 @@ class RNN_model(nn.Module):
         vars_2T_1 = F.softplus(self.fc_vars(y)) # A second linear projection followed by an activation function to get variances
 
         # The mean and variances at the first time step need to be computed only based on the previous hidden state
-        mu_1 = self.fc_mean(F.relu(self.fc(self.init_h0(batch_size)[-1,:,:]))).view(batch_size, 1, -1)
-        var_1 = F.softplus(self.fc_vars(F.relu(self.fc(self.init_h0(batch_size)[-1,:,:]))).view(batch_size, 1, -1))
+        #mu_1 = self.fc_mean(F.relu(self.fc(self.init_h0(batch_size)[-1,:,:]))).view(batch_size, 1, -1)
+        #var_1 = F.softplus(self.fc_vars(F.relu(self.fc(self.init_h0(batch_size)[-1,:,:]))).view(batch_size, 1, -1))
 
-        # To get the means and variances for the time instants t=1, ..., T, we take the previous result and concatenate 
-        # all but last value to the value found at t=1. Concatenation is done along the sequence dimension
-        mu = torch.cat(
-            (mu_1, mu_2T_1[:,:-1,:]),
-            dim=1
-        )
-
-        vars = torch.cat(
-            (var_1, vars_2T_1[:,:-1,:]),
-            dim=1
-        )
+        # MODIFIED: To get the means and variances for the time instants t=2, ..., T+1
+        mu = mu_2T_1[:,:,:]
+        vars = vars_2T_1[:,:,:]
 
         return mu, vars
 
