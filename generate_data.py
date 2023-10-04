@@ -15,7 +15,7 @@ from ssm_models import LinearSSM, LorenzAttractorModel, SinusoidalSSM
 import argparse
 from parse import parse
 import os
-import panda as pd
+import pandas as pd
 
 def initialize_model(type_, parameters):
 
@@ -200,7 +200,7 @@ def create_and_save_dataset(T, N_samples, filename, parameters, type_="LinearSSM
     #                                                P=num_realizations, 
     #                                                usenorm_flag=usenorm_flag)
     #np.random.seed(10) # This can be kept at a fixed step for being consistent
-    Z_XY = modified_generate_state_observation_XY(type_=type_, parameters=parameters, T=T, N_samples=N_samples)
+    Z_XY = generate_state_observation_XY(type_=type_, parameters=parameters, T=T, N_samples=N_samples)
     save_dataset(Z_XY, filename=filename)
 
 if __name__ == "__main__":
